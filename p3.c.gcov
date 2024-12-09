@@ -1,0 +1,100 @@
+        -:    0:Source:p3.c
+        -:    0:Graph:p3.gcno
+        -:    0:Data:p3.gcda
+        -:    0:Runs:1
+        -:    1:#include <stdio.h>
+        -:    2:#include <string.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <stdbool.h>
+        -:    5:
+        -:    6:struct events {
+        -:    7:	char name[256];
+        -:    8:	int starttime;
+        -:    9:	int endtime;
+        -:   10:};
+        -:   11:
+        1:   12:int main ()
+        -:   13:{
+        -:   14:	struct events allevents[24];
+       25:   15:	for (int x=0; x<24; x++)
+        -:   16:	{
+        -:   17:		struct events newevent;
+       24:   18:		newevent.starttime = -1;
+       24:   19:		allevents[x] = newevent;
+        -:   20:	}
+        1:   21:	int numevents = 0;
+        -:   22:	char usercommand[300];
+        1:   23:	printf("$ ");
+        1:   24:	fgets(usercommand, 300, stdin);
+        1:   25:	char *word = strtok(usercommand, "  \n\t");
+        2:   26:	while (strcmp(word, "quit") != 0)
+        -:   27:	{
+        1:   28:		if (strcmp(word, "add") == 0)
+        -:   29:		{
+        -:   30:			struct events newevent;
+        1:   31:			char *newname = strtok(NULL, "  \n\t");
+        1:   32:			strcpy(newevent.name, newname);
+        1:   33:			char *newstarttime = strtok(NULL, "  \n\t");
+        1:   34:			newevent.starttime = atoi(newstarttime);
+        1:   35:			char *newendtime = strtok(NULL, "  \n\t");
+        1:   36:			newevent.endtime = atoi(newendtime);
+        1:   37:			bool overlapcheck = false;
+        1:   38:			if (newevent.starttime < 24 && newevent.endtime < 24 && newevent.starttime < newevent.endtime) 
+        -:   39:			{
+       25:   40:				for (int x=0; x<24; x++)
+        -:   41:				{
+       24:   42:					if (overlapcheck == false)
+        -:   43:					{
+       24:   44:						if (newevent.starttime > allevents[x].starttime)
+        -:   45:						{
+       24:   46:							if (newevent.starttime < allevents[x].endtime)
+        -:   47:							{
+    #####:   48:								printf("Event overlap error\n");
+    #####:   49:								overlapcheck = true;
+        -:   50:							}
+        -:   51:						}
+        -:   52:						else
+        -:   53:						{
+    #####:   54:							if (newevent.endtime > allevents[x].starttime)
+        -:   55:							{
+    #####:   56:								printf("Event overlap error\n");
+    #####:   57:								overlapcheck = true;
+        -:   58:							}
+        -:   59:						}
+        -:   60:					}
+        -:   61:				}
+        1:   62:				if (overlapcheck == false)
+        -:   63:				{
+        1:   64:					allevents[newevent.starttime] = newevent;
+        1:   65:					numevents++;
+        -:   66:				}
+        -:   67:			}
+        -:   68:		}
+        1:   69:		if (strcmp(word, "delete") == 0)
+        -:   70:		{
+    #####:   71:			char *deletename = strtok(NULL, "  \n\t");
+    #####:   72:			for (int i=0; i<24; i++)
+        -:   73:			{
+    #####:   74:				if (strcmp(allevents[i].name, deletename) == 0)
+        -:   75:				{
+    #####:   76:					allevents[i].starttime = -1;
+    #####:   77:					numevents--;
+        -:   78:				}
+        -:   79:			}
+        -:   80:		}
+        1:   81:		if (strcmp(word, "printcalendar") == 0)
+        -:   82:		{
+    #####:   83:			for (int j=0; j<24; j++)
+        -:   84:			{
+    #####:   85:				if (allevents[j].starttime != -1)
+        -:   86:				{
+    #####:   87:					printf("%s %d %d\n", allevents[j].name, allevents[j].starttime, allevents[j].endtime);
+        -:   88:				}
+        -:   89:			}
+        -:   90:		}
+        1:   91:		printf("$ ");
+        1:   92:		fgets(usercommand, 300, stdin);
+        1:   93:		word = strtok(usercommand, "  \n\t");
+        -:   94:	}
+        1:   95:	return 0;
+        -:   96:}
